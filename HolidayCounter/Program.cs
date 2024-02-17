@@ -1,6 +1,7 @@
-﻿using System;
+﻿using HolidayCounter;
+using System;
 
-Console.WriteLine("This is from Holiday Counter");
+Console.WriteLine("Holiday Counter");
 
 bool flag = true;
 
@@ -12,11 +13,13 @@ DateTime cDate = DateTime.Today;
 
 DateTime[] holidayDates =
 [
-    new DateTime(2024, 02, 18),
+    new DateTime(2029, 01, 01),
     new DateTime(2024, 01, 01),
-    new DateTime(2024, 04, 01),
+    new DateTime(2024, 03, 08),
+    new DateTime(2024, 03, 25),
     new DateTime(2020, 04, 01),
-    new DateTime(2020, 05, 01),
+    new DateTime(2024, 03, 25),
+    new DateTime(2021, 10, 11),
 ];
 
 DateTime[] newholidayDates = new DateTime[holidayDates.Length];
@@ -27,81 +30,114 @@ Array.Sort(newholidayDates);
 
 string[] holidayNames =
     [
-        "just holiday",
-        "new year",
-        "april fools day",
-        "a",
-        "n"
+        "New Year Future",
+        "New Year",
+        "Maha ShivaRatri",
+        "Holi",
+        "April Fools Day",
+        "Nepali New Year",
+        "Saturday",
     ];
 
+Console.WriteLine();
 Console.WriteLine("Choose an option:");
 Console.WriteLine("1 => View past holidays");
 Console.WriteLine("2 => View upcoming holidays");
 Console.WriteLine("3 => View holidays today");
 Console.WriteLine("4 => View days remaining for nearest holiday");
+Console.WriteLine();
 
-int option = int.Parse(Console.ReadLine());
+var optionInput = Console.ReadLine();
+
+if (int.TryParse(optionInput, out int option))
+    Console.WriteLine();
+else
+    Console.WriteLine("Error");
+
+int counter = 0;
 
 switch (option)
 {
     case 1:
-        for (int i = 0; i < holidayDates.Length; i++)
-        {
-            int result = DateTime.Compare(holidayDates[i], cDate);
-            if (result < 0)
-            {
-                Console.WriteLine("Past Holiday: " + holidayDates[i].ToShortDateString() + " " + holidayNames[i]);
-                flag = false;
-            }
-        }
-        if (flag)
-        {
-            Console.WriteLine("No Past Holidays Available");
-        }
-        break;
-    case 2:
-        for (int i = 0; i < holidayDates.Length; i++)
-        {
-            int result = DateTime.Compare(holidayDates[i], cDate);
-            if (result > 0)
-            {
-                Console.WriteLine("Upcoming Holiday: " + holidayDates[i].ToShortDateString() + " " + holidayNames[i]);
-                flag = false;
-            }
-        }
-        if (flag)
-        {
-            Console.WriteLine("No Future Holidays Available");
-        }
-        break;
-    case 3:
-        for (int i = 0; i < holidayDates.Length; i++)
-        {
-            int result = DateTime.Compare(holidayDates[i], cDate);
-            if (result == 0)
-            {
-                Console.WriteLine("Holiday today: " + holidayDates[i].ToShortDateString() + " " + holidayNames[i]);
-                flag = false;
-            }
-        }
-        if (flag)
-        {
-            Console.WriteLine("No Holiday Today");
-        }
-        break;
+        Console.WriteLine("All Past Holidays");
+        Console.WriteLine();
+        Console.WriteLine("Date \t\t Holiday Name");
 
-    case 4:
-        for (int i = 0; i < newholidayDates.Length; i++)
+    for (int i = 0; i < holidayDates.Length; i++)
+    {
+        int result = DateTime.Compare(holidayDates[i], cDate);
+        if (result < 0)
         {
-            int result = DateTime.Compare(newholidayDates[i], cDate);
-            if (result > 0)
-            {
-                Console.WriteLine(newholidayDates[i].ToShortDateString());
-            }
+            counter++;
+            Console.WriteLine(holidayDates[i].ToShortDateString() + "\t " + holidayNames[i]);
+            flag = false;
         }
-        break;
+    }
+        Console.WriteLine();
+        Console.WriteLine("Past Holidays Counter:" + counter);
 
-    default:
-        Console.WriteLine("Invalid option");
-        break;
+    if (flag)
+    {
+        Console.WriteLine("No Past Holidays Available");
+    }
+    break;
+case 2:
+    for (int i = 0; i < holidayDates.Length; i++)
+    {
+        int result = DateTime.Compare(holidayDates[i], cDate);
+        if (result > 0)
+        {
+            counter++;
+            Console.WriteLine("Upcoming Holiday: " + holidayDates[i].ToShortDateString() + " " + holidayNames[i]);
+            flag = false;
+        }
+    }
+        Console.WriteLine();
+        Console.WriteLine("Future Holidays Counter: " + counter);
+    if (flag)
+    {
+        Console.WriteLine("No Future Holidays Available");
+    }
+    break;
+case 3:
+    for (int i = 0; i < holidayDates.Length; i++)
+    {
+        int result = DateTime.Compare(holidayDates[i], cDate);
+        if (result == 0)
+        {
+            Console.WriteLine("Holiday today: " + holidayDates[i].ToShortDateString() + " " + holidayNames[i]);
+            flag = false;
+        }
+    }
+    if (flag)
+    {
+        Console.WriteLine("No Holiday Today");
+    }
+    break;
+
+case 4:
+    for (int i = 0; i < newholidayDates.Length; i++)
+    {
+        int result = DateTime.Compare(newholidayDates[i], cDate);
+        if (result > 0)
+        {
+            DateTime nearestHoliday = newholidayDates[i];
+            TimeSpan daysLeft = nearestHoliday - cDate;
+
+            int indexOfHolidayName = Utilities.searchHoliday(newholidayDates, i, holidayDates);
+
+            Console.WriteLine(daysLeft.Days + " day left for " + holidayNames[indexOfHolidayName]);
+            flag = false;
+            break;
+        }
+    }
+    if (flag)
+    {
+        Console.WriteLine("There are no holidays in the future.");
+    }
+    break;
+
+default:
+    Console.WriteLine("Please choose from above options only.");
+    break;
 }
